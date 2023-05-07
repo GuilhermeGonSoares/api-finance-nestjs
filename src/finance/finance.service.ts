@@ -9,6 +9,7 @@ import { Between, Repository } from 'typeorm';
 import { Finance } from './entities/finance.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
+import { FinanceOrderBy, OrderDirection } from './dto/orderBy-finance.dto';
 
 @Injectable()
 export class FinanceService {
@@ -26,10 +27,21 @@ export class FinanceService {
     return await this.financeRepo.save(finance);
   }
 
-  async findAll() {
+  async findAll(order: FinanceOrderBy, direction: OrderDirection) {
+    if (!order) {
+      return await this.financeRepo.find({
+        relations: {
+          category: true,
+        },
+      });
+    }
+
     return await this.financeRepo.find({
       relations: {
         category: true,
+      },
+      order: {
+        [order]: direction || OrderDirection.ASC,
       },
     });
   }

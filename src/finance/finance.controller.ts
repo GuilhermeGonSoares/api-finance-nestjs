@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { FinanceService } from './finance.service';
 import { CreateFinanceDto } from './dto/create-finance.dto';
 import { UpdateFinanceDto } from './dto/update-finance.dto';
 import { Month } from 'src/decorators/month.decorator';
+import { FinanceOrderByDto } from './dto/orderBy-finance.dto';
 
 @Controller('finance')
 export class FinanceController {
@@ -23,8 +25,10 @@ export class FinanceController {
   }
 
   @Get()
-  findAll() {
-    return this.financeService.findAll();
+  findAll(@Query() orderBy: FinanceOrderByDto) {
+    const { order, direction } = orderBy;
+
+    return this.financeService.findAll(order, direction);
   }
 
   @Get('/balance')
