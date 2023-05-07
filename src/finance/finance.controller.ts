@@ -11,6 +11,7 @@ import {
 import { FinanceService } from './finance.service';
 import { CreateFinanceDto } from './dto/create-finance.dto';
 import { UpdateFinanceDto } from './dto/update-finance.dto';
+import { Month } from 'src/decorators/month.decorator';
 
 @Controller('finance')
 export class FinanceController {
@@ -24,6 +25,11 @@ export class FinanceController {
   @Get()
   findAll() {
     return this.financeService.findAll();
+  }
+
+  @Get('/balance')
+  balanceMonth(@Month() month: string) {
+    return this.financeService.balance(month);
   }
 
   @Get(':id')
