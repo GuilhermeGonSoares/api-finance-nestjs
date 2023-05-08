@@ -47,23 +47,6 @@ export class FinanceService {
       where,
       order,
     });
-
-    // if (!order) {
-    //   return await this.financeRepo.find({
-    //     relations: {
-    //       category: true,
-    //     },
-    //   });
-    // }
-
-    // return await this.financeRepo.find({
-    //   relations: {
-    //     category: true,
-    //   },
-    //   order: {
-    //     [order]: direction || OrderDirection.ASC,
-    //   },
-    // });
   }
 
   async findOne(id: number) {
