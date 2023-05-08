@@ -9,7 +9,10 @@ import { Between, Repository } from 'typeorm';
 import { Finance } from './entities/finance.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
-import { FinanceOrderBy, OrderDirection } from './dto/orderBy-finance.dto';
+import {
+  FinanceTypeOrderByDto,
+  OrderDirection,
+} from './dto/orderBy-finance.dto';
 
 @Injectable()
 export class FinanceService {
@@ -27,23 +30,40 @@ export class FinanceService {
     return await this.financeRepo.save(finance);
   }
 
-  async findAll(order: FinanceOrderBy, direction: OrderDirection) {
-    if (!order) {
-      return await this.financeRepo.find({
-        relations: {
-          category: true,
-        },
-      });
+  async findAll(typeAndOrderBy: FinanceTypeOrderByDto) {
+    const { type, direction, orderBy } = typeAndOrderBy;
+    if (direction && !orderBy) {
+      throw new BadRequestException(
+        'Order direction cannot be used without order by.',
+      );
     }
+    const order = orderBy ? { [orderBy]: direction || OrderDirection.ASC } : {};
+    const where = type ? { type } : {};
 
     return await this.financeRepo.find({
       relations: {
         category: true,
       },
-      order: {
-        [order]: direction || OrderDirection.ASC,
-      },
+      where,
+      order,
     });
+
+    // if (!order) {
+    //   return await this.financeRepo.find({
+    //     relations: {
+    //       category: true,
+    //     },
+    //   });
+    // }
+
+    // return await this.financeRepo.find({
+    //   relations: {
+    //     category: true,
+    //   },
+    //   order: {
+    //     [order]: direction || OrderDirection.ASC,
+    //   },
+    // });
   }
 
   async findOne(id: number) {
