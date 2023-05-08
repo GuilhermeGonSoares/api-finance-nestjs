@@ -1,4 +1,5 @@
 import { Category } from 'src/category/entities/category.entity';
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -36,4 +37,7 @@ export class Finance {
   // Relationship
   @ManyToOne(() => Category, (category) => category.finances)
   category: Category;
+
+  @ManyToOne(() => User, (user) => user.finances, { onDelete: 'CASCADE' })
+  user: User;
 }
