@@ -7,9 +7,15 @@ import { CategoryModule } from './category/category.module';
 import { FinanceModule } from './finance/finance.module';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot({
+      limit: 10,
+      ttl: 60,
+    }),
     TypeOrmModule.forRoot(dataSourceOptions),
     CategoryModule,
     FinanceModule,
@@ -17,6 +23,12 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+  ],
 })
 export class AppModule {}
