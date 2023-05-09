@@ -3,28 +3,22 @@ import {
   ExecutionContext,
   ForbiddenException,
 } from '@nestjs/common';
-
-interface ITokenPayload {
-  id: number;
-  name: string;
-  email: string;
-  role: number;
-}
-
-export const User = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
+import { User } from 'src/user/entities/user.entity';
+export const UserDecorator = createParamDecorator(
+  (filter: Exclude<keyof User, 'finances'>, ctx: ExecutionContext) => {
     const request = ctx.switchToHttp().getRequest();
-    const { tokenPayload } = request;
+    const { user } = request;
 
-    if (!tokenPayload) {
-      throw new ForbiddenException('Forbidden resource');
+    if (!user) {
+      throw new ForbiddenException(
+        'it is necessary to use the Guard AuthGuard to be able to access the decorator @UserDecorator',
+      );
     }
-    const token: ITokenPayload = { ...tokenPayload };
-    return {
-      id: token.id,
-      name: token.name,
-      email: token.email,
-      role: token.role,
-    };
+
+    if (!filter) {
+      return user;
+    }
+
+    return user[filter];
   },
 );
