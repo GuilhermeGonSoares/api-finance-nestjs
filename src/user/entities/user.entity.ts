@@ -1,3 +1,4 @@
+import { Role } from 'src/enums/role.enum';
 import { Finance } from 'src/finance/entities/finance.entity';
 import {
   Column,
@@ -7,11 +8,6 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-
-export enum RoleUser {
-  USER = 1,
-  ADMIN = 2,
-}
 
 @Entity({ name: 'users' })
 export class User {
@@ -27,7 +23,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ default: RoleUser.USER })
+  @Column({ default: Role.User })
   role: number;
 
   @CreateDateColumn({ name: 'created_at' })

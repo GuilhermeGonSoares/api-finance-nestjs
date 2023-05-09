@@ -5,7 +5,7 @@ import {
   IsString,
   IsStrongPassword,
 } from 'class-validator';
-import { RoleUser } from '../entities/user.entity';
+import { Role } from 'src/enums/role.enum';
 
 export class CreateUserDto {
   @IsString()
@@ -24,6 +24,6 @@ export class CreateUserDto {
   password: string;
 
   @IsOptional()
-  @IsIn([RoleUser.USER, RoleUser.ADMIN])
+  @IsIn([Role.User, Role.Admin])
   role?: number;
 }
