@@ -3,11 +3,11 @@ import {
   ExecutionContext,
   Injectable,
   ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from 'src/decorators/role.decorator';
 import { Role } from 'src/enums/role.enum';
-import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
@@ -15,6 +15,12 @@ export class RoleGuard implements CanActivate {
 
   canActivate(context: ExecutionContext) {
     const { user } = context.switchToHttp().getRequest();
+
+    if (!user) {
+      throw new BadRequestException(
+        'It is necessary to use AuthGuard, since it passes the logged in user to the request.',
+      );
+    }
 
     //  Preciso verificar se a minha classe ou função que eu apliquei esse Guard possui
     //o decorator Role.
@@ -34,7 +40,7 @@ export class RoleGuard implements CanActivate {
 
     if (!isRoleAccepted) {
       throw new ForbiddenException(
-        'access denied, route only available to admin',
+        'Access denied, route only available to admin',
       );
     }
 
