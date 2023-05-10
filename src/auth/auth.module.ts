@@ -8,8 +8,10 @@ import { User } from 'src/user/entities/user.entity';
 
 @Module({
   imports: [
-    JwtModule.register({
-      secret: 'htW)dZ);@({154rnY$KVX~4[HvECea#',
+    JwtModule.registerAsync({
+      useFactory: () => ({
+        secret: process.env.JWT_SECRET,
+      }),
     }),
     TypeOrmModule.forFeature([User]),
     forwardRef(() => UserModule),
