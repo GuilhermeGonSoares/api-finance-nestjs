@@ -30,6 +30,16 @@ export class UserService {
     return await this.userRepo.find();
   }
 
+  async findUserByEmail(email: string) {
+    const user = await this.userRepo.findOneBy({ email });
+
+    if (!user) {
+      throw new NotFoundException(`Not found user with this ${email} email`);
+    }
+
+    return user;
+  }
+
   async existUser(email: string) {
     const exist = await this.userRepo.exist({ where: { email } });
 
@@ -73,7 +83,7 @@ export class UserService {
     return await this.userRepo.remove(user);
   }
 
-  private async createPasswordHash(password: string) {
+  async createPasswordHash(password: string) {
     return await bcrypt.hash(password, 10);
   }
 }

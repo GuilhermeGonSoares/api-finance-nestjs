@@ -10,6 +10,7 @@ import { UserService } from 'src/user/user.service';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AuthRegisterDto } from './dto/auth-register.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
     @InjectRepository(User) private readonly userRepo: Repository<User>,
+    private readonly mailer: MailerService,
   ) {}
 
   createToken(user: User) {
@@ -32,7 +34,7 @@ export class AuthService {
       },
       {
         expiresIn: this.expiresIn,
-        issuer: this.expiresIn,
+        issuer: this.issuer,
       },
     );
 
@@ -42,7 +44,7 @@ export class AuthService {
   checkToken(token: string) {
     try {
       const payload = this.jwtService.verify(token, {
-        issuer: this.expiresIn,
+        issuer: this.issuer,
       });
       return payload;
     } catch (error) {
@@ -85,16 +87,41 @@ export class AuthService {
   }
 
   async forget(email: string) {
-    const existUser = await this.userRepo.exist({ where: { email } });
-    if (!existUser) {
-      throw new UnauthorizedException(`Not found user with this ${email}`);
-    }
+    const user = await this.userService.findUserByEmail(email);
 
-    return existUser;
+    const token = this.jwtService.sign(
+      {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+      {
+        expiresIn: '30 minutes',
+        subject: String(user.id),
+        issuer: this.issuer,
+      },
+    );
+
+    await this.mailer.sendMail({
+      subject: 'Recuperação de Senha',
+      to: email,
+      template: 'forget',
+      context: {
+        name: user.name,
+        token,
+      },
+    });
+
+    return true;
   }
 
   async reset(token: string, password: string) {
-    return 'Precisa ser implementado';
+    const { id } = this.checkToken(token);
+    const user = await this.userService.findOne(id);
+    user.password = await this.userService.createPasswordHash(password);
+
+    const updatedUser = await this.userRepo.save(user);
+    return this.createToken(updatedUser);
   }
 
   private async compareHash(
