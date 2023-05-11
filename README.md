@@ -17,6 +17,7 @@ A API de controle financeiro foi desenvolvida usando as seguintes tecnologias:
 - Typescript
 - NestJS
 - TypeORM
+- Jest
 - SQLite (para desenvolvimento)
 - PostgreSQL (para produção)
 
