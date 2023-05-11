@@ -1,5 +1,3 @@
-import { Role } from 'src/enums/role.enum';
-import { Finance } from 'src/finance/entities/finance.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +6,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Role } from '../../enums/role.enum';
+import { Finance } from '../../finance/entities/finance.entity';
 
 @Entity({ name: 'users' })
 export class User {

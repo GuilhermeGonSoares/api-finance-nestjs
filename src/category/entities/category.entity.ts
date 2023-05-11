@@ -1,4 +1,3 @@
-import { Finance } from 'src/finance/entities/finance.entity';
 import {
   Column,
   CreateDateColumn,
@@ -7,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Finance } from '../../finance/entities/finance.entity';
 
 @Entity({ name: 'categories' })
 export class Category {

@@ -1,5 +1,3 @@
-import { Category } from 'src/category/entities/category.entity';
-import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -8,6 +6,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Category } from '../../category/entities/category.entity';
+import { User } from '../../user/entities/user.entity';
 
 export enum FinanceType {
   deposit,
